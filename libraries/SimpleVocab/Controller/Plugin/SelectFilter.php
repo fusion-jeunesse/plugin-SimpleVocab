@@ -33,9 +33,14 @@ class SimpleVocab_Controller_Plugin_SelectFilter extends Zend_Controller_Plugin_
 
     /**
      * Regular expression to match option group labels
-     * Excludes "[ Group Label ]" as well as "--- Group Label ---"
+     * Metches "[ Group Label ]" as well as "--- Group Label ---"
      */
     const MATCH_OPTGROUP = '~^(?:\[|---)\s*(.*)\s*(?:]|---)$~';
+
+    /**
+     * Regular expression to match greyed out options
+     */
+    const MATCH_DISABLED = '~^\*\s*(.*)$~';
 
     /**
      * Set the filters pre-dispatch only on configured routes.
@@ -117,6 +122,7 @@ class SimpleVocab_Controller_Plugin_SelectFilter extends Zend_Controller_Plugin_
         // Split options into optgroups
         $optgroup = null;
         foreach($terms as $term) {
+            if(!preg_match(self::MATCH_DISABLED,$term))
             if(preg_match(self::MATCH_OPTGROUP,$term,$match)) {
                 $optgroup = $match[1];
                 $selectTerms[$optgroup] = array();
